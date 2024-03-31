@@ -14,7 +14,7 @@ We first set up an EKS cluster. The terraform code for this is in the eks folder
 9.  metrics server
 10.  External secrets helm chart
 
-Cloudwatch dashboard
+*Cloudwatch dashboard*
 
 ![Cloudwatch dashboard](/docs/images/dash.png )
 
