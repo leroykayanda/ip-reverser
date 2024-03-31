@@ -15,6 +15,7 @@ We first set up an EKS cluster. The terraform code for this is in the eks folder
 10.  External secrets helm chart
 
 Cloudwatch dashboard
+
 ![Cloudwatch dashboard](/docs/images/dash.png )
 
 Of note is that we use the new [access entries](https://aws.amazon.com/blogs/containers/a-deep-dive-into-simplified-amazon-eks-access-management-controls/) feature to grant users access to the cluster rather than using the aws-auth config map. This allows us to assign users fine grained permissions eg we can grant a user permissions only to specific namespaces. We can also grant full admin or read only permissions to the cluster.  
