@@ -1,4 +1,4 @@
-**EKS Setup**
+## EKS Setup
 
 We first set up an EKS cluster. The terraform code for this is in the eks folder. We use a custom terraform module located in the eks/modules/eks folder. These are the components that we set up.
 
