@@ -90,8 +90,8 @@ Various functionalities are written in python functions.
 
 - We first get the IP from the X-Forwarded-For header
 - We then initialise a connection to the Aurora MySQL db and create an ips table to store the IP we retrieve
-- We save the IP in the table
 - We reverse the IP
+- We save the IP and reversed IP in the ips table
 - We retrieve the count of all IPs stored in the database.
 - Finally we display the users IP, the reversed IP and the count of all IPs in the database.
 

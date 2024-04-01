@@ -56,7 +56,7 @@ def get_ip_count(cursor):
 @app.route("/")
 def home():
     # get IP from X-Forwarded-For header
-    ip = request.headers.get("Host")
+    ip = request.headers.get("X-Forwarded-For")
     all_headers = dict(request.headers)
 
     # initialize MySQL connection
