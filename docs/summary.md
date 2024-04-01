@@ -7,10 +7,10 @@ We first set up an EKS cluster. The terraform code for this is in the eks folder
 2.  VPC
 3. cloudwatch container insights for metrics
 4. fluentbit for logs
-5.  a cloudwatch dashboard showing key cluster metrics like cpu, memory and disk usage. There are also cloudwatch alarms for these key metrics.
-6.  argocd for CICD. This installs the core argocd helm chart which comes bundled with argocd notifications. We also install the argocd image updater which triggers deployments when an image is pushed to ECR. Argocd is exposed via ingress.
+5.  a cloudwatch dashboard showing key cluster metrics like worker node cpu, memory and disk usage. There are also cloudwatch alarms for these key metrics.
+6.  argocd for CICD. This installs the core argocd helm chart which comes bundled with argocd notifications. We also install the argocd image updater which triggers kubernetes deployments when an image is pushed to ECR. Argocd is exposed via ingress.
 7.  cluster autoscaler
-8.  AWS load balancer controller
+8.  AWS load balancer controller requires to set up ingress
 9.  metrics server
 10.  External secrets helm chart
 
@@ -26,7 +26,7 @@ We also set up the reloader helm chart which triggers a deployment when a new se
 
 ## IP-Reverser App Setup
 
-We then set app a python flask application that shows the origin public IP of any request it receives as well as the IP in reverse. These are the components that we set up.
+We then set up a python flask application that shows the origin public IP of any request it receives as well as the IP in reverse. These are the components that we create.
 
 **App components**
  - cloudwatch alarms to monitor key application metrics e.g pod memory and cpu usage
@@ -38,7 +38,7 @@ We then set app a python flask application that shows the origin public IP of an
 - kubernetes service
 - kubernetes secrets
 - kubernetes AWS load balancer controller
-- kubernetesHPA (Horizontal App Autoscaler)
+- kubernetes HPA (Horizontal App Autoscaler)
 - kubernetes app namespace 
 - kubernetes app service account. We use IRSA (IAM Role for Service Accounts)
 
@@ -59,6 +59,7 @@ We have also set up argocd notifications to send alerts to slack whenever the ap
 ![Cloudwatch dashboard](/docs/images/slack.png )
 
 **The Flask App**
+
 The EKS ingress spins up an application load balancer. We can thus get the public IP of a user from the **X-Forwarded-For** header.
 
     @app.route("/")
