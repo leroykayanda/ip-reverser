@@ -65,17 +65,17 @@ The EKS ingress spins up an application load balancer. We can thus get the publi
     @app.route("/")
     def home():
         # get IP from X-Forwarded-For header
-        ip = request.headers.get("X-Forwarded-For")
+        ip = request.headers.get("Host")
         all_headers = dict(request.headers)
     
         # initialize MySQL connection
         cursor = initialize_mysql()
     
-        # Insert the ip into the ips table
-        save_ip(ip,cursor)
-    
         # reverse the IP
         reversed_ip = reverse_ip(ip)
+    
+        # Insert the ip into the ips table
+        save_ip(ip,reversed_ip,cursor)
     
         # retrieve the count of all IPs in the database
         ip_counts = get_ip_count(cursor)
