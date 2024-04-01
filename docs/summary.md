@@ -20,7 +20,7 @@ We first set up an EKS cluster. The terraform code for this is in the eks folder
 
 Of note is that we use the new [access entries](https://aws.amazon.com/blogs/containers/a-deep-dive-into-simplified-amazon-eks-access-management-controls/) feature to grant users access to the cluster rather than using the aws-auth config map. This allows us to assign users fine grained permissions eg we can grant a user permissions only to specific namespaces. We can also grant full admin or read only permissions to the cluster.  
 
-We set up the external-secrets helm chart to sync secrets from AWS secrets manager to kubernetes. The secrets are used by the application as environment variables. For this application, we store the database connection details i.e MYSQL_HOST, MYSQL_DATABASE, MYSQL_USER, MYSQL_PASSWORD
+We set up the external-secrets helm chart to sync secrets from AWS secrets manager to kubernetes. The secrets are used by the application as environment variables. For this application, we store the Aurora database connection details i.e MYSQL_HOST, MYSQL_DATABASE, MYSQL_USER, MYSQL_PASSWORD
 
 We also set up the reloader helm chart which triggers a deployment when a new secret is added or an existing secret is modified. Production secrets should thus only be modified during a maintenance window.
 
@@ -29,7 +29,7 @@ We also set up the reloader helm chart which triggers a deployment when a new se
 We then set app a python flask application that shows the origin public IP of any request it receives as well as the IP in reverse. These are the components that we set up.
 
 **App components**
- - cloudwatch alarms to monitor key application metrics
+ - cloudwatch alarms to monitor key application metrics e.g pod memory and cpu usage
  - ECR repo
  - Aurora MySQL DB
  - argocd application
@@ -45,6 +45,7 @@ We then set app a python flask application that shows the origin public IP of an
 We use [kustomize](https://kustomize.io/) to manage the application's yaml files. It allows us to have a base config and environment specific overlays where we can specify the configs that differ across environments eg pod cpu and memory.
 
 **Github Actions Pipeline**
+
 We use github actions to push an image to ECR. ArgoCD image updater will detect this new image and trigger a new kubernetes deployment.
 
 *ArgoCD Application*
@@ -56,3 +57,50 @@ We have also set up argocd notifications to send alerts to slack whenever the ap
 *Slack Notification*
 
 ![Cloudwatch dashboard](/docs/images/slack.png )
+
+**The Flask App**
+The EKS ingress spins up an application load balancer. We can thus get the public IP of a user from the **X-Forwarded-For** header.
+
+    @app.route("/")
+    def home():
+        # get IP from X-Forwarded-For header
+        ip = request.headers.get("X-Forwarded-For")
+        all_headers = dict(request.headers)
+    
+        # initialize MySQL connection
+        cursor = initialize_mysql()
+    
+        # Insert the ip into the ips table
+        save_ip(ip,cursor)
+    
+        # reverse the IP
+        reversed_ip = reverse_ip(ip)
+    
+        # retrieve the count of all IPs in the database
+        ip_counts = get_ip_count(cursor)
+    
+        return jsonify({
+            "IP": ip,
+            "IP Reversed": reversed_ip,
+            "ip_counts": ip_counts
+        })
+
+Various functionalities are written in python functions.
+
+- We first get the IP from the X-Forwarded-For header
+- We then initialise a connection to the Aurora MySQL db and create an ips table to store the IP we retrieve
+- We save the IP in the table
+- We reverse the IP
+- We retrieve the count of all IPs stored in the database.
+- Finally we display the users IP, the reversed IP and the count of all IPs in the database.
+
+*IPs*
+
+![Cloudwatch dashboard](/docs/images/ips.png )
+
+
+**Design Decisions**
+
+- We use the development server provides by flask to run the application as it is the quickest way. In production, we would use a production ready server web server like nginx.
+- We made use of terraform modules to set up various resources such as EKS. This has various advantages like making it quick and easy to set up resources and it allows us to enforce infrastructure standards.
+- We use python functions in the flask application to make the code easier to read
