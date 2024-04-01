@@ -25,21 +25,24 @@ def initialize_mysql():
     return cursor
 
 def save_ip(ip,cursor):
-    if "10.0" not in ip:
+    if ip is not None and "10.0" not in ip:
         # ignore private ips starting with the VPC CIDR 10.0
         insert_query = "INSERT INTO ips (ip) VALUES (%s)"
         cursor.execute(insert_query, (ip,))
         cursor.connection.commit() # Commit the changes
 
 def reverse_ip(ip):
-    # use split function to make a python list from the ip string, using . as the delimitter
-    ip_list = ip.split('.')
+    if ip is not None and "10.0" not in ip:
+        # use split function to make a python list from the ip string, using . as the delimitter
+        ip_list = ip.split('.')
 
-    # use rerverse function to reverse the order of the list
-    ip_list.reverse()
+        # use rerverse function to reverse the order of the list
+        ip_list.reverse()
 
-    # convert the list containing the reversed IP back to a string
-    reversed_ip = '.'.join(ip_list)
+        # convert the list containing the reversed IP back to a string
+        reversed_ip = '.'.join(ip_list)
+    else:
+        reversed_ip = ''
 
     return reversed_ip
 
