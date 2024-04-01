@@ -25,9 +25,11 @@ def initialize_mysql():
     return cursor
 
 def save_ip(ip,cursor):
-    insert_query = "INSERT INTO ips (ip) VALUES (%s)"
-    cursor.execute(insert_query, (ip,))
-    cursor.connection.commit() # Commit the changes
+    if "10.0" not in ip:
+        # ignore private ips starting with the VPC CIDR 10.0
+        insert_query = "INSERT INTO ips (ip) VALUES (%s)"
+        cursor.execute(insert_query, (ip,))
+        cursor.connection.commit() # Commit the changes
 
 def reverse_ip(ip):
     # use split function to make a python list from the ip string, using . as the delimitter
@@ -51,7 +53,7 @@ def get_ip_count(cursor):
 @app.route("/")
 def home():
     # get IP from X-Forwarded-For header
-    ip = request.headers.get("Host")
+    ip = request.headers.get("X-Forwarded-For")
     all_headers = dict(request.headers)
 
     # initialize MySQL connection
@@ -69,7 +71,6 @@ def home():
     return jsonify({
         "IP": ip,
         "IP Reversed": reversed_ip,
-        "headers": all_headers,
         "ip_counts": ip_counts
     })
 
