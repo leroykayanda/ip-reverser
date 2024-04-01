@@ -206,5 +206,24 @@ resource "aws_secretsmanager_secret" "secret" {
 
 resource "aws_secretsmanager_secret_version" "data" {
   secret_id     = aws_secretsmanager_secret.secret.id
-  secret_string = jsonencode(var.app_secrets)
+  secret_string = jsonencode(local.app_secrets)
+}
+
+# db SG
+
+resource "aws_security_group" "db_sg" {
+  name        = "${var.env}-${var.service}-DB-SG"
+  description = "DB traffic"
+  vpc_id      = data.terraform_remote_state.eks.outputs.vpc_id
+
+  ingress {
+    from_port   = var.db_port
+    to_port     = var.db_port
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "${var.env}-${var.service}-DB-SG"
+  }
 }

@@ -116,13 +116,73 @@ variable "argo_server" {
   }
 }
 
-variable "app_secrets" {
+# variable "app_secrets" {
+#   type        = map(string)
+#   description = "app environment variables"
+#   default = {
+#     MYSQL_HOST     = "value1"
+#     MYSQL_DATABASE = "value2"
+#     MYSQL_USER     = "value3"
+#     MYSQL_PASSWORD = "value4"
+#   }
+# }
+
+# database
+variable "db_cluster_instance_class" {
   type        = map(string)
-  description = "app environment variables"
+  description = "Aurora DB instance class"
   default = {
-    MYSQL_HOST     = "value1"
-    MYSQL_DATABASE = "value2"
-    MYSQL_USER     = "value3"
-    MYSQL_PASSWORD = "value4"
+    "dev"  = "db.t3.medium"
+    "prod" = ""
   }
+}
+
+variable "db_port" {
+  type    = number
+  default = 3306
+}
+
+variable "db_engine_version" {
+  default = "8.0.mysql_aurora.3.06.0"
+}
+
+variable "db_name" {
+  type    = string
+  default = "ip_reverser"
+}
+
+variable "db_master_username" {
+  type = string
+}
+
+variable "db_master_password" {
+  type = string
+}
+
+variable "db_instance_count" {
+  type = map(number)
+  default = {
+    "dev"  = 1
+    "prod" = 1
+  }
+}
+
+variable "db_engine" {
+  type        = string
+  description = "Valid Values: aurora-mysql, aurora-postgresql, mysql, postgres"
+  default     = "aurora-mysql"
+}
+
+variable "db_parameter_group_family" {
+  type        = string
+  description = "eg aurora-postgresql13"
+  default     = "aurora-mysql8.0"
+}
+
+variable "publicly_accessible" {
+  default = true
+}
+
+variable "performance_insights_enabled" {
+  default = false
 }
