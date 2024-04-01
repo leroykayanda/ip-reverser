@@ -203,3 +203,8 @@ resource "argocd_application" "app" {
 resource "aws_secretsmanager_secret" "secret" {
   name = "${var.env}-${var.service}"
 }
+
+resource "aws_secretsmanager_secret_version" "data" {
+  secret_id     = aws_secretsmanager_secret.secret.id
+  secret_string = jsonencode(var.app_secrets)
+}

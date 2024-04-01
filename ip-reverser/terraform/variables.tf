@@ -115,3 +115,14 @@ variable "argo_server" {
     "prod" = ""
   }
 }
+
+variable "app_secrets" {
+  type        = map(string)
+  description = "app environment variables"
+  default = {
+    MYSQL_HOST     = "value1"
+    MYSQL_DATABASE = "value2"
+    MYSQL_USER     = "value3"
+    MYSQL_PASSWORD = "value4"
+  }
+}
