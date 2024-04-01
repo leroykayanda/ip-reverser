@@ -1,0 +1,24 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base/
+
+labels:
+- pairs:
+    Environment: dev
+    Team: devops
+
+namespace: dev-ip-reverser
+
+patches:
+  - path: deployment-patch.yaml
+  - path: ExternalSecret-patch.yaml
+  - path: lb-patch.yaml
+  - path: hpa-patch.yaml
+  - target:
+      kind: Namespace
+      name: default
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: dev-ip-reverser

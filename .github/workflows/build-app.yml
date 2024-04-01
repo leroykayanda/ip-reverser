@@ -1,0 +1,55 @@
+name: Build-App-Image
+
+on:
+  workflow_call:
+    inputs:
+      REGION:
+        required: true
+        type: string
+      ECR_REPO:
+        required: true
+        type: string
+      DOCKERFILE:
+        required: true
+        type: string
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+
+env:
+  AWS_REGION: ${{ inputs.REGION }}
+  ECR_REPOSITORY: ${{ inputs.ECR_REPO }}
+  DOCKERFILE: ${{ inputs.DOCKERFILE }}
+
+jobs:
+  build_app_image:
+    name: build_app
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1-node16
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+          DOCKERFILE: ${{ env.DOCKERFILE }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest -f $DOCKERFILE .
+
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY --all-tags

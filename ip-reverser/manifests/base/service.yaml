@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ip-reverser
+spec:
+  selector:
+    app: ip-reverser
+  type: NodePort
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
