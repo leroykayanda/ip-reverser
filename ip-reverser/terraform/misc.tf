@@ -198,3 +198,8 @@ resource "argocd_application" "app" {
     }
   }
 }
+
+# secret
+resource "aws_secretsmanager_secret" "secret" {
+  name = "${var.env}-${var.service}"
+}
