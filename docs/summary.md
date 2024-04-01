@@ -105,3 +105,4 @@ Various functionalities are written in python functions.
 - We use the development server provides by flask to run the application as it is the quickest way. In production, we would use a production ready server web server like nginx.
 - We made use of terraform modules to set up various resources such as EKS. This has various advantages like making it quick and easy to set up resources and it allows us to enforce infrastructure standards.
 - We use python functions in the flask application to make the code easier to read
+- We logged into argocd using the default admin user. In prouction we would disable this default user and set up Google SSO.

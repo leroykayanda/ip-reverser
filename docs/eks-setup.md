@@ -35,7 +35,7 @@
 - verify that
 
 1. A cloudwatch dashboard named dev-compute-kubernetes-cluster has been created
-2. 4 cluster cloudwatch alarms have been created with the prefix dev-compute
+2. Four cluster cloudwatch alarms have been created with the prefix dev-compute
 3. A load balancer has been created with a port 443 listener rule pointing to the argocd service
 4. Navigate to the argocd domain name.
 5. use the username admin and run cmd below to get the password
