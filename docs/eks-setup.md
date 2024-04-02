@@ -42,4 +42,4 @@
 
 `kubectl get secret -n argocd argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode`
 
-6. After logging in, go to settings>repositories to make sure argocd has credentials to log in to your github organization.
+6. After logging in, go to settings>repositories to make sure argocd has credentials to access the repos in your github organization.

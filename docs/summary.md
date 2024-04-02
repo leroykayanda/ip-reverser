@@ -10,7 +10,7 @@ We first set up an EKS cluster. The terraform code for this is in the eks folder
 5.  a cloudwatch dashboard showing key cluster metrics like worker node cpu, memory and disk usage. There are also cloudwatch alarms for these key metrics.
 6.  argocd for CICD. This installs the core argocd helm chart which comes bundled with argocd notifications. We also install the argocd image updater which triggers kubernetes deployments when an image is pushed to ECR. Argocd is exposed via ingress.
 7.  cluster autoscaler
-8.  AWS load balancer controller requires to set up ingress
+8.  AWS load balancer controller required to set up ingress
 9.  metrics server
 10.  External secrets helm chart
 
@@ -22,7 +22,7 @@ Of note is that we use the new [access entries](https://aws.amazon.com/blogs/con
 
 We set up the external-secrets helm chart to sync secrets from AWS secrets manager to kubernetes. The secrets are used by the application as environment variables. For this application, we store the Aurora database connection details i.e MYSQL_HOST, MYSQL_DATABASE, MYSQL_USER, MYSQL_PASSWORD
 
-We also set up the reloader helm chart which triggers a deployment when a new secret is added or an existing secret is modified. Production secrets should thus only be modified during a maintenance window.
+We also set up the reloader helm chart which triggers a deployment when a new secret is added or an existing secret is modified. Production secrets should thus only be modified during a maintenance window to avoid traffic disruption.
 
 ## IP-Reverser App Setup
 
@@ -102,7 +102,7 @@ Various functionalities are written in python functions.
 
 **Design Decisions**
 
-- We use the development server provides by flask to run the application as it is the quickest way. In production, we would use a production ready server web server like nginx.
+- We use the development server provided by flask to run the application as it is the quickest way. In production, we would use a production ready web server like nginx.
 - We made use of terraform modules to set up various resources such as EKS. This has various advantages like making it quick and easy to set up resources and it allows us to enforce infrastructure standards.
 - We use python functions in the flask application to make the code easier to read
-- We logged into argocd using the default admin user. In prouction we would disable this default user and set up Google SSO.
+- We logged into argocd using the default admin user. In production we would disable this default user and set up Google SSO.

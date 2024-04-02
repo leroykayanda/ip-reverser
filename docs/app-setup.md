@@ -33,7 +33,7 @@ Verify the manifest files in ip-reverser/manifests are correct. Go to the correc
 7. argo_path
 8. argo_server
 
-- modify aws_iam_policy.policy in ip-reverser/terraform/misc.tf with the appropriate IAM permissions for the app. 
+- modify aws_iam_policy.policy in ip-reverser/terraform/misc.tf with the appropriate IAM permissions for the app while using the principle of least privilege. This app needs the secretsmanager:GetSecretValue and secretsmanager:DescribeSecret IAM permissions to allow it retrieve secrets from AWS secrets manager.
 - run terraform init and terraform apply
 
 **Pipeline setup**

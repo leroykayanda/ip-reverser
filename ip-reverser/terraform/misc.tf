@@ -42,10 +42,6 @@ resource "aws_iam_policy" "policy" {
     Statement = [
       {
         Action = [
-          "s3:PutObject",
-          "s3:ListBucket",
-          "s3:GetObject",
-          "s3:DeleteObject",
           "secretsmanager:GetSecretValue",
           "secretsmanager:DescribeSecret"
         ]
